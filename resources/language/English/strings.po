@@ -1,0 +1,87 @@
+# XBMC Media Centre language file
+# Addon Name: Slurpee
+# Addon id: script.slurpee
+# Addon Provider: CorvustKodi
+msgid ""
+msgstr ""
+"Project-Id-Version: XBMC-Addons\n"
+"Report-Msgid-Bugs-To: corvust.xbmc@gmail.com\n"
+"POT-Creation-Date: 2014-06-04 04:09+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgctxt "Addon Summary"
+msgid "An interface to managing automatic episode downloads."
+msgstr ""
+
+msgctxt "Addon Description"
+msgid "Provides a nice interface for editing an XML file used by a cron-trigger script to search for and download new episodes of shows using the Transmission BitTorrent client."
+msgstr ""
+
+# Main Dialog
+
+msgctxt "#32100"
+msgid "Slurpee"
+msgstr ""
+
+msgctxt "#32101"
+msgid "Add Show"
+msgstr ""
+
+msgctxt "#32102"
+msgid "Save"
+msgstr ""
+
+msgctxt "#32103"
+msgid "Delete"
+msgstr ""
+
+msgctxt "#32106"
+msgid "Exit"
+msgstr ""
+
+# Details Dialog
+
+msgctxt "#32200"
+msgid "TV Show - Details"
+msgstr ""
+
+# Search providers
+
+msgctxt "#32300"
+msgid "The Pirate Bay"
+msgstr ""
+
+msgctxt "#32301"
+msgid "Mininova"
+msgstr ""
+
+msgctxt "#32302"
+msgid "Kickass"
+msgstr ""
+
+
+# Settings
+
+msgctxt "#32800"
+msgid "Settings"
+msgstr ""
+
+msgctxt "#32801"
+msgid "File Path"
+msgstr ""
+
+msgctxt "#32802"
+msgid "Default Download Path"
+msgstr ""
+
+msgctxt "#32803"
+msgid "TVDB API Key"
+msgstr ""
+

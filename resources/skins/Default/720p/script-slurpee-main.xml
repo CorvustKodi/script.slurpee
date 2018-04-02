@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<window>
+	<defaultcontrol>120</defaultcontrol>
+	<allowoverlays>false</allowoverlays>
+	<coordinates>
+		<system>1</system>
+		<posx>0</posx>
+		<posy>0</posy>
+	</coordinates>
+	<controls>
+		<control type="image">
+			<posx>0</posx>
+			<posy>0</posy>
+			<width>1280</width>
+			<height>720</height>
+			<texture>slurpee-background-dialog.png</texture>
+			<animation effect="fade" time="200">WindowOpen</animation>
+			<animation effect="fade" time="200">WindowClose</animation>
+		</control>
+		<control type="label">
+			<description>textarea</description>
+			<posx>0</posx>
+			<posy>0</posy>
+			<width>1280</width>
+			<visible>true</visible>
+			<label>$ADDON[script.slurpee 32100]</label>
+			<font>font11</font>
+			<textcolor>white</textcolor>
+			<align>center</align>
+		</control>
+		<control type="group">
+		    <posx>10</posx>
+		    <posy>630</posy>
+		    <control type="button" id="111">
+		    	<description>Add Show</description>
+		    	<posx>40</posx>
+		    	<posy>20</posy>
+		    	<height>60</height>
+		    	<width>240</width>
+		    	<align>center</align>
+				<aligny>center</aligny>
+		    	<label>$ADDON[script.slurpee 32101]</label>
+		    	<font>font12_title</font>
+		    	<onup>120</onup>
+		    	<onright>112</onright>
+		    	<onleft>113</onleft>
+		    	<texturefocus>slurpee-button-focus.png</texturefocus>
+		    	<texturenofocus>slurpee-button-nofocus.png</texturenofocus>
+		    </control>
+			<control type="button" id="112">
+				<description>Cancel</description>
+				<posx>520</posx>
+				<posy>20</posy>
+				<height>60</height>
+				<width>240</width>
+				<align>center</align>
+				<aligny>center</aligny>
+				<label>$ADDON[script.slurpee 32106]</label>
+				<font>font12_title</font>
+				<onright>113</onright>
+                <onleft>111</onleft>
+				<onup>120</onup>
+		    	<texturefocus>slurpee-button-focus.png</texturefocus>
+		    	<texturenofocus>slurpee-button-nofocus.png</texturenofocus>
+			</control>
+			<control type="button" id="113">
+				<description>Save</description>
+				<posx>1000</posx>
+				<posy>20</posy>
+				<height>60</height>
+				<width>240</width>
+				<align>center</align>
+				<aligny>center</aligny>
+				<label>$ADDON[script.slurpee 32102]</label>
+				<font>font12_title</font>
+				<onright>111</onright>
+                <onleft>112</onleft>
+				<onup>120</onup>
+		    	<texturefocus>slurpee-button-focus.png</texturefocus>
+		    	<texturenofocus>slurpee-button-nofocus.png</texturenofocus>
+			</control>
+		</control>
+        <control type="list" id="120">
+			<description>Show List</description>
+			<posx>10</posx>
+			<posy>35</posy>
+			<width>1260</width>
+			<height>600</height>
+			<viewtype label="Show List">list</viewtype>
+			<orientation>vertical</orientation>
+			<visible>true</visible>
+			<onleft>111</onleft>
+			<onright>111</onright>
+			<itemlayout width="1280" height="70">
+				<control type="image">
+					<posx>0</posx>
+					<posy>0</posy>
+					<width>1280</width>
+					<height>70</height>
+					<texture>slurpee-list-bg.png</texture>
+				</control>
+				<control type="label">
+					<posx>0</posx>
+					<posy>0</posy>
+					<width>1190</width>
+					<height>20</height>
+					<label>$INFO[ListItem.label]</label>
+				</control>
+				<control type="label">
+					<posx>00</posx>
+					<posy>30</posy>
+					<width>1190</width>
+					<height>20</height>
+					<label>$INFO[ListItem.label2]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="1280" height="70">
+				<control type="image">
+					<posx>0</posx>
+					<posy>0</posy>
+					<width>1280</width>
+					<height>70</height>
+					<visible>Control.HasFocus(120)</visible>
+					<texture border="5">slurpee-list-bg-selected.png</texture>
+				</control>
+				<control type="image">
+					<posx>0</posx>
+					<posy>0</posy>
+					<width>1280</width>
+					<height>70</height>
+					<visible>!Control.HasFocus(120)</visible>
+					<texture border="5">slurpee-list-bg-selected-nofocus.png</texture>
+				</control>
+				<control type="label">
+					<posx>0</posx>
+					<posy>0</posy>
+					<width>1190</width>
+					<height>20</height>
+					<label>$INFO[ListItem.label]</label>
+					<scroll>true</scroll>
+				</control>
+				<control type="label">
+					<posx>0</posx>
+					<posy>30</posy>
+					<width>1190</width>
+					<height>20</height>
+					<label>$INFO[ListItem.label2]</label>
+					<scroll>true</scroll>
+				</control>
+			</focusedlayout>
+		</control>
+	</controls>
+</window>

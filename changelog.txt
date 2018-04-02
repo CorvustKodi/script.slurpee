@@ -1,0 +1,6 @@
+Version 0.9.5
+	* A bit of an overhaul
+	* Added TVDB show name look ups
+	* UI changes
+Version 0.1.0
+        * Initial release.
