@@ -1,4 +1,4 @@
-Version 0.9.5
+Version 0.9.6
 	* Updated TVDB API
 	* ADD YOUR OWN API KEY OR RESET SETTINGS TO DEFAULT
 Version 0.9.5
