@@ -1,4 +1,7 @@
 Version 0.9.5
+	* Updated TVDB API
+	* ADD YOUR OWN API KEY OR RESET SETTINGS TO DEFAULT
+Version 0.9.5
 	* A bit of an overhaul
 	* Added TVDB show name look ups
 	* UI changes

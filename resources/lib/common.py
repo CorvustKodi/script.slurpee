@@ -3,6 +3,8 @@ import requests
 import BeautifulSoup
 import xbmc
 import xbmcgui
+import json
+import xbmcaddon
 
 class TVShow(object):
     def __init__(self, path, name, filename, season, minepisode, enabled):
@@ -48,6 +50,18 @@ class ShowList(object):
             return self.shows[index]
         return None
 
+    def cleanUp(self):
+        removeIdx = []
+        i = 0
+        while i < len(self.shows):
+            if self.shows[i].name is None or self.shows[i].name == '':
+                removeIdx.append(i)
+            i=i+1    
+        i = len(removeIdx)-1
+        while i >= 0:
+            self.removeShow(removeIdx[i])
+            i = i-1
+
     def toXML(self, xmlpath):
         xmldoc = xml.dom.minidom.Document()
         xmldoc.encoding = u"UTF-8"
@@ -69,28 +83,53 @@ class ShowList(object):
         xmldoc.unlink()
         
 class TVDBSearch(object):
+    
+    def login(self):
+        resp = requests.post(self.tvdbApi+'/login',json={'apikey':self.apiKey})
+        if not resp.ok:
+            xbmc.log('Failed to authenticate to TVDB: '+str(resp.status_code))
+            resp.raise_for_status()
+        respJ = json.loads(resp.content);
+        self.jwtToken = respJ['token']
+    
     def __init__(self, apiKey):
+        settings = xbmcaddon.Addon(id='script.slurpee')
+        self.lang = xbmc.getLanguage(xbmc.ISO_639_1)
+        self.tvdbApi = 'https://api.thetvdb.com'
         self.apiKey = apiKey
+        self.jwtToken = None
+        self.login()
         
     def search(self, showTitle):
-        tvdb_url = 'http://thetvdb.com/api/GetSeries.php?seriesname='
         
-        search_url = tvdb_url + showTitle.replace(' ','+')
-        tvdb = requests.get(search_url)
-        soup = BeautifulSoup.BeautifulStoneSoup(tvdb.text)
-        xbmc.log(soup.prettify(),xbmc.LOGWARNING)
-        seriesNodes = soup.findAll('series')
+        search_url = self.tvdbApi + "/search/series?name=" + showTitle.replace(' ','+')
+        if self.jwtToken is None:
+            self.login()
+        if self.jwtToken is None:
+            xbmc.log('Could not authenticate!',xbmc.LOGERROR)
+            return None
+        
+        headers = {'Authorization' : 'Bearer ' + self.jwtToken, \
+                   'Accept-Language' : self.lang, \
+                   'Accept' : 'application/json'}
+        tvdb = requests.get(search_url,headers=headers)
+        respJ = json.loads(tvdb.content)
+        
+        seriesNodes = respJ['data']
+
         ret = []
         for node in seriesNodes:
-            xbmc.log(str(node),xbmc.LOGWARNING)
             sNames = []
-            sNames.append(str(node.seriesname.string).rstrip().lstrip())
-            if node.aliasnames is not None:
-                tags = str(node.aliasnames.string).split('|')
-                for tag in tags:
-                    sNames.append(tag.rstrip().lstrip())
+            sNames.append(str(node['seriesName']).replace(')','').replace('(',''))
+            aliases = node['aliases']
+            
+            year = node['firstAired'].split('-')[0]
+            
+            for a in aliases:
+                sNames.append(str(a).replace(')','').replace('(',''))
             for n in sNames:
                 li = xbmcgui.ListItem(n+' | (TheTVDB)')
-                li.setUniqueIDs({'tvdb',str(node.id.string)})
+                li.setUniqueIDs({'tvdb',str(node['id'])})
+                li.setInfo('video',{'year':year,})
                 ret.append(li)
         return ret

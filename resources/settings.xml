@@ -3,5 +3,5 @@
     <setting type="lsep" label="32800" />
     <setting id="file_path" type="file" default="/home/xbmc/shows.xml" label="32801"/> 
     <setting id="default_base_path" type="text" default="/home/xbmc/Media/TV/" label="32802"/>
-    <setting id="tvdb_api_key" type="text" default="" label="32803"/>
+    <setting id="tvdb_api_key" type="text" default="D9094409F6FBB9F4" option="hidden" label="32803"/>
 </settings>

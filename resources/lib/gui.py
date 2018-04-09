@@ -40,14 +40,12 @@ class GrabberGUI(xbmcgui.WindowXMLDialog):
         if (controlID == 111):
             # Add button
             new_show = common.TVShow('', '', '', 0, 0, 'false')
+            self.shows.addShow(new_show)
             w = ShowInfoGUI("script-slurpee-details.xml", __settings__.getAddonInfo('path') , "Default", isNew=True, shows=self.shows)
-            w.setShow(new_show, len(self.shows.getShows()) - 1)
+            w.setShow(len(self.shows.getShows()) - 1)
             w.doModal()
             del w
-            if new_show.name != None and new_show.name != '':
-                self.shows.addShow(new_show)
-                l = xbmcgui.ListItem(label=new_show.name)
-                slist.addItem(l)
+            self.shows.cleanUp()
             self.updateList(slist)
         if (controlID == 112):
             # Exit button

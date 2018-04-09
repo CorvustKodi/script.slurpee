@@ -1,0 +1,4 @@
+/.project
+/.pydevproject
+resources/lib/*.pyo
+/.settings
