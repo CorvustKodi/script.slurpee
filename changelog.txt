@@ -1,3 +1,6 @@
+Version 0.9.7
+	* Added scraper service
+	* Some code refactoring
 Version 0.9.6
 	* Updated TVDB API
 	* ADD YOUR OWN API KEY OR RESET SETTINGS TO DEFAULT

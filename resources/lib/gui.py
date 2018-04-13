@@ -5,13 +5,12 @@ import sys
 import os
 import xbmc
 import xbmcgui
-import common
+import slurpee.utilities as util
+import slurpee.dataTypes as dataTypes
 
-_ = sys.modules[ "__main__" ].__language__
-__settings__ = sys.modules[ "__main__" ].__settings__
+ADDON = sys.modules[ "__main__" ].ADDON
+ADDON_PATH = sys.modules[ "__main__" ].ADDON_PATH
 
-KEY_BUTTON_BACK = 275
-KEY_KEYBOARD_ESC = 61467
 KEY_MENU_ID = 92
 
 EXIT_SCRIPT = (6, 10, 247, 275, 61467, 216, 257, 61448,)
@@ -28,8 +27,8 @@ class GrabberGUI(xbmcgui.WindowXMLDialog):
             slist.addItem(l)
 
     def onInit(self):
-        file_path = __settings__.getSetting('file_path')
-        self.shows = common.ShowList(file_path)
+        file_path = ADDON.getSetting('file_path')
+        self.shows = dataTypes.ShowList(file_path)
 
         slist = self.getControl(120)
         self.updateList(slist)
@@ -39,9 +38,9 @@ class GrabberGUI(xbmcgui.WindowXMLDialog):
         slist = self.getControl(120)
         if (controlID == 111):
             # Add button
-            new_show = common.TVShow('', '', '', 0, 0, 'false')
+            new_show = dataTypes.TVShow('', '', '', 0, 0, 'false')
             self.shows.addShow(new_show)
-            w = ShowInfoGUI("script-slurpee-details.xml", __settings__.getAddonInfo('path') , "Default", isNew=True, shows=self.shows)
+            w = ShowInfoGUI("script-slurpee-details.xml", ADDON_PATH , "Default", isNew=True, shows=self.shows)
             w.setShow(len(self.shows.getShows()) - 1)
             w.doModal()
             del w
@@ -58,13 +57,18 @@ class GrabberGUI(xbmcgui.WindowXMLDialog):
             index = slist.getSelectedPosition()
             item = slist.getListItem(index)
             show = self.shows.getShow(index)
-            w = ShowInfoGUI("script-slurpee-details.xml", __settings__.getAddonInfo('path') , "Default", isNew=False, shows=self.shows)
+            w = ShowInfoGUI("script-slurpee-details.xml", ADDON_PATH , "Default", isNew=False, shows=self.shows)
             w.setShow(index)
             w.doModal()
             del w
             self.updateList(slist)
     def onFocus(self, controlID):
-        pass
+        # Focus on the selection list, make sure we highlight a entry
+        if controlID == 120:
+            list = self.getControl(120)
+            if list.getSelectedPosition() < 0 or list.getSelectedPosition() >= list.size():
+                if list.size() > 0:
+                    list.selectItem(0)
 
     def onAction(self, action):
         if (action.getButtonCode() in CANCEL_DIALOG) or (action.getId() == KEY_MENU_ID):
@@ -74,7 +78,7 @@ class GrabberGUI(xbmcgui.WindowXMLDialog):
         if dialog.yesno('Are you sure?', 'Are you sure you want to exit', '(unsaved changes will be lost)?'):
             super(GrabberGUI, self).close()
     def save(self):
-        self.shows.toXML(__settings__.getSetting('file_path'))
+        self.shows.toXML(ADDON.getSetting('file_path'))
         dialog = xbmcgui.Dialog()
         dialog.ok('Save Successful!', 'Show list has been saved.')
 
@@ -120,7 +124,7 @@ class ShowInfoGUI(xbmcgui.WindowXMLDialog):
             self.show.name=None
             self.close()
         show_name = keyboard.getText()
-        searcher = common.TVDBSearch(__settings__.getSetting('tvdb_api_key'))
+        searcher = util.TVDBSearch(ADDON.getSetting('tvdb_api_key'),ADDON.getLanguage(xbmc.ISO_639_1))
         showNames = searcher.search(show_name)
         showNames.append(xbmcgui.ListItem(show_name + ' | (Original Search)'))
         dialog = xbmcgui.Dialog()
@@ -133,7 +137,7 @@ class ShowInfoGUI(xbmcgui.WindowXMLDialog):
         # Auto generate the filename
         self.show.filename = (self.show.name).replace(' ', '.')
         # Auto generate the library path
-        self.show.path = os.path.join(__settings__.getSetting('default_base_path'),self.show.name)
+        self.show.path = os.path.join(ADDON.getSetting('default_base_path'),self.show.name)
 
         # Select the season
         seasonList = []
@@ -170,7 +174,7 @@ class ShowInfoGUI(xbmcgui.WindowXMLDialog):
                 if(keyboard.isConfirmed()):
                     self.show.name = keyboard.getText()
                     self.show.filename = (self.show.name).replace(' ', '.')
-                    self.show.path = os.path.join(__settings__.getSetting('default_base_path'),self.show.name)
+                    self.show.path = os.path.join(ADDON.getSetting('default_base_path'),self.show.name)
                     self.updateItem()
             if item.getLabel() == "Season:":
                 # Season edit dialog

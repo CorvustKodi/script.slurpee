@@ -58,30 +58,55 @@ msgctxt "#32300"
 msgid "The Pirate Bay"
 msgstr ""
 
-msgctxt "#32301"
-msgid "Mininova"
-msgstr ""
-
-msgctxt "#32302"
-msgid "Kickass"
-msgstr ""
-
-
 # Settings
 
 msgctxt "#32800"
-msgid "Settings"
+msgid "Global Settings"
 msgstr ""
 
 msgctxt "#32801"
-msgid "File Path"
+msgid "Show List File Path"
 msgstr ""
 
 msgctxt "#32802"
-msgid "Default Download Path"
+msgid "Base Download Path"
 msgstr ""
 
 msgctxt "#32803"
 msgid "TVDB API Key"
+msgstr ""
+
+msgctxt "#32804"
+msgid "Enable Scraper Service"
+msgstr ""
+
+msgctxt "#32805"
+msgid "Service Run Interval (minutes)"
+msgstr ""
+
+msgctxt "#32810"
+msgid "Transmission RPC Settings"
+
+msgctxt "#32811"
+msgid "Host"
+msgstr ""
+
+msgctxt "#32812"
+msgid "Port"
+msgstr ""
+
+msgctxt "#32813"
+msgid "User"
+msgstr ""
+
+msgctxt "#32814"
+msgid "Password"
+msgstr ""
+
+msgctxt "$32820"
+msgid "Torrent Search Settings"
+
+msgctxt "#32821"
+msgid "Only Use Trusted Sources"
 msgstr ""
 

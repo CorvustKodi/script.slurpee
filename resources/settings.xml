@@ -4,4 +4,16 @@
     <setting id="file_path" type="file" default="/home/xbmc/shows.xml" label="32801"/> 
     <setting id="default_base_path" type="text" default="/home/xbmc/Media/TV/" label="32802"/>
     <setting id="tvdb_api_key" type="text" default="D9094409F6FBB9F4" option="hidden" label="32803"/>
+    <setting id="enable_service" type="bool" default="false" label="32804"/>
+    <setting id="service_interval" type="number" default="60" label="32805"/>
+    <setting type="sep" />
+    <setting type="lsep" label="32810" />
+    <setting id="rpc_host" type="ipaddress" default="127.0.0.1" label="32811"/>
+    <setting id="rpc_port" type="number" default="2580" label="32812"/>
+    <setting id="rpc_user" type="text" default="" label="32813"/>
+    <setting id="rpc_pass" type="text" default="" option="hidden" label="32814"/>
+    <setting type="sep" />
+    <setting type="lsep" label="32820" />
+    <setting id="search_trustedonly" type="bool" default="false" label="32821"/>
+    <setting id="search_enable_tpb" type="bool" default="true" label="32300"/>
 </settings>
