@@ -103,8 +103,11 @@ msgctxt "#32814"
 msgid "Password"
 msgstr ""
 
-msgctxt "$32820"
+msgctxt "#32820"
 msgid "Torrent Search Settings"
+
+msgctxt "#32830"
+msgid "Search Providers"
 
 msgctxt "#32821"
 msgid "Only Use Trusted Sources"

@@ -7,7 +7,7 @@ import xbmc
 import xbmcaddon
 
 ADDON = xbmcaddon.Addon()
-ADDON_PATH = ADDON.getAddontInfo('path').decode('utf-8')
+ADDON_PATH = ADDON.getAddonInfo('path').decode('utf-8')
 BASE_RESOURCE_PATH = xbmc.translatePath( os.path.join( ADDON_PATH, 'resources', 'lib' ) )
 sys.path.append (BASE_RESOURCE_PATH)
 

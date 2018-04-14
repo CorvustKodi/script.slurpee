@@ -124,7 +124,7 @@ class ShowInfoGUI(xbmcgui.WindowXMLDialog):
             self.show.name=None
             self.close()
         show_name = keyboard.getText()
-        searcher = util.TVDBSearch(ADDON.getSetting('tvdb_api_key'),ADDON.getLanguage(xbmc.ISO_639_1))
+        searcher = util.TVDBSearch(ADDON.getSetting('tvdb_api_key'),xbmc.getLanguage(xbmc.ISO_639_1))
         showNames = searcher.search(show_name)
         showNames.append(xbmcgui.ListItem(show_name + ' | (Original Search)'))
         dialog = xbmcgui.Dialog()
@@ -208,8 +208,12 @@ class ShowInfoGUI(xbmcgui.WindowXMLDialog):
                     self.updateItem()
 
     def onFocus(self, controlID):
-        pass
-
+        # Focus on the selection list, make sure we highlight a entry
+        if controlID == 110:
+            list = self.getControl(110)
+            if list.getSelectedPosition() < 0 or list.getSelectedPosition() >= list.size():
+                if list.size() > 0:
+                    list.selectItem(0)
     def updateItem(self):
         self.props['name'].setLabel2(self.show.name)
         self.props['season'].setLabel2(str(self.show.season))

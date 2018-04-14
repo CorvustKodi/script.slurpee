@@ -9,6 +9,7 @@ import time
 import socket
 import slurpee.parsing as parsing
 import slurpee.dataTypes as dataTypes
+import xbmc
 
 def settingsFromKodi(kodiSettings):
     import xbmcaddon
@@ -22,7 +23,7 @@ def settingsFromKodi(kodiSettings):
         ret['RPC_PASS'] = kodiSettings.getSetting('rpc_pass')
         ret['TRUSTEDONLY'] = kodiSettings.getSetting('search_trustedonly')
         ret['TORRENT_FILE_PATH'] = kodiSettings.getSetting('file_path')
-        if kodiSettings.getSetting('search_enabled_tpb'):
+        if kodiSettings.getSetting('search_enable_tpb'):
             ret['SEARCHERS'].append('ThePirateBay')
     except:
         pass
@@ -67,6 +68,7 @@ def scraper(settings, allshows):
                 torrentFiles.append(files_dict[id_key][file_key]['name'].lower())
     for show in allshows.getShows():
         if show.enabled:
+            xbmc.log('Checking %s' % show.name,xbmc.LOGDEBUG)
             try:
                 dlTorrent = None
                 # Figure out what the next episode we need is - only download 1 episode per sweep.
@@ -75,14 +77,17 @@ def scraper(settings, allshows):
                     os.makedirs(show.path)
                 if not os.path.exists(dir_path):
                     os.makedirs(dir_path)
-
-                lastEpisode = minepisode
+                xbmc.log('Directory path: %s' % dir_path,xbmc.LOGDEBUG)
+                lastEpisode = show.minepisode
                 for f in os.listdir(dir_path): 
                     hasMatch = parsing.fuzzyMatch(show.filename,f)
                     if hasMatch != None:
                         season, episode = parsing.parseEpisode(f);
+                        xbmc.log('%s = season %d, episode %d' % (f, season,episode),xbmc.LOGDEBUG)
                         if episode > lastEpisode:
                             lastEpisode = episode
+                    else:
+                        xbmc.log("No fuzzy match between '%s' and '%s'" % (show.filename, f),xbmc.LOGDEBUG)
                 nextEpisode = lastEpisode + 1
   
                 if show.season < 10:
@@ -95,36 +100,36 @@ def scraper(settings, allshows):
                     episode_str = str(nextEpisode)
 
                 targetName = show.filename + '.s'+season_str+'e'+episode_str
-                print 'Looking for %s' % targetName
+                xbmc.log('Looking for %s' % targetName,xbmc.LOGDEBUG)
 
                 engine = None
                 for SEARCHER in settings['SEARCHERS']:
                     try:
-                        print 'Calling engine %s' % SEARCHER
+                        xbmc.log('Calling engine %s' % SEARCHER,xbmc.LOGDEBUG)
                         engine = getattr(search, SEARCHER)
                         results = engine().search(urllib.quote(targetName),{'trusted_uploaders':settings['TRUSTEDONLY']})
                     
                         if len(results) > 0:
                             dlTorrent = results[0];
                         else:
-                            print 'No results returned.'
+                            xbmc.log('No results returned.',xbmc.LOGDEBUG)
                             continue
                         found = False
                         if dlTorrent is not None :
                             for tfile in torrentFiles:
                                 hasMatch = parsing.fuzzyMatch(targetName,tfile)
                                 if hasMatch != None:
-                                    print 'Found existing download: %s' % tfile
+                                    xbmc.log('Found existing download: %s' % tfile,xbmc.LOGDEBUG)
                                     found = True
                                     break
                             if not found:
-                                print 'Adding torrent: %s' % dlTorrent['url']
+                                xbmc.log('Adding torrent: %s' % dlTorrent['url'],xbmc.LOGDEBUG)
                                 tc.add_uri(dlTorrent['url'])
                                 break
                     except Exception as details:
-                        print 'An error occured: %s' % details
+                        xbmc.log('An error occured: %s' % details,xbmc.LOGERROR)
             except Exception as details:
-                print 'An error occured: %s' % details
+                xbmc.log('An error occured: %s' % details,xbmc.LOGERROR)
             time.sleep(10)
 
 def scrape(settings):

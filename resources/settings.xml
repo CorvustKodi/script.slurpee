@@ -15,5 +15,6 @@
     <setting type="sep" />
     <setting type="lsep" label="32820" />
     <setting id="search_trustedonly" type="bool" default="false" label="32821"/>
+    <setting type="lsep" label="32830" />
     <setting id="search_enable_tpb" type="bool" default="true" label="32300"/>
 </settings>

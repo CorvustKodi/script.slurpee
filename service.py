@@ -3,9 +3,10 @@
 
 import xbmc
 import xbmcaddon
+import os
 
 ADDON = xbmcaddon.Addon()
-ADDON_PATH = ADDON.getAddontInfo('path').decode('utf-8')
+ADDON_PATH = ADDON.getAddonInfo('path').decode('utf-8')
 BASE_RESOURCE_PATH = xbmc.translatePath( os.path.join( ADDON_PATH, 'resources', 'lib' ) )
 sys.path.append (BASE_RESOURCE_PATH)
 
@@ -13,10 +14,12 @@ if __name__ == '__main__':
     import torrent.scrape as scraper
     monitor = xbmc.Monitor()
     # The interval in the settings is in minutes
-    runInterval = ADDON.getSetting('service_interval')
-
-    while not monitor.abortRequested() and ADDON.getSetting('enable_service'):
-        if monitor.waitForAbort(60*runInterval):
+    isFirst = True
+    while not monitor.abortRequested():
+        if not isFirst and monitor.waitForAbort(60*int(ADDON.getSetting('service_interval'))):
             break
-        scraper.scrape(scraper.settingsFromKodi(ADDON))
+        isFirst = False
+        if 'true' == ADDON.getSetting('enable_service'):
+            xbmc.log("running Slurpee scraping service",xbmc.LOGNOTICE)
+            scraper.scrape(scraper.settingsFromKodi(ADDON))
 
