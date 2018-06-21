@@ -2,4 +2,5 @@
 /.pydevproject
 resources/lib/*.pyo
 resources/lib/**/*.pyo
+resources/lib/**/*.pyc
 /.settings

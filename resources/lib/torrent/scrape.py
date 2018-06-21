@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import sys
 import xml.dom.minidom
 import urllib
 import search
@@ -33,7 +34,7 @@ def settingsFromFile(settings_file):
     ret = {'RPC_HOST':'127.0.0.1', 'RPC_PORT':2580, 'RPC_USER':'', \
            'RPC_PASS':'', 'TRUSTEDONLY':False, 'TORRENT_FILE_PATH':'', 'SEARCHERS':[]}
     try:
-        doc2 = xml.dom.minidom.parse(transmissionxbmc_file)
+        doc2 = xml.dom.minidom.parse(settings_file)
         settingsNodes = doc2.getElementsByTagName('setting')
         for node in settingsNodes:
             if node.attributes['id'].value == 'rpc_host':
@@ -42,17 +43,18 @@ def settingsFromFile(settings_file):
                 ret['RPC_PORT'] = node.attributes['value'].value
             if node.attributes['id'].value == 'rpc_user':
                 ret['RPC_USER'] = node.attributes['value'].value
-            if node.attributes['id'].value == 'rpc_password':
+            if node.attributes['id'].value == 'rpc_pass':
                 ret['RPC_PASS'] = node.attributes['value'].value
             if node.attributes['id'].value == 'search_trustedonly':
                 if str(node.attributes['value'].value).lower() != 'true':
                     ret['TRUSTEDONLY'] = False
-            if node.attributes['id'].value == 'search_enabled_tpb':
+            if node.attributes['id'].value == 'search_enable_tpb':
                 ret['SEARCHERS'].append('ThePirateBay')
             if node.attributes['id'].value =='file_path':
                 ret['TORRENT_FILE_PATH'] = node.attributes['value'].value
     except:
         pass
+    print ret
     return ret
     
 def scraper(settings, allshows):
