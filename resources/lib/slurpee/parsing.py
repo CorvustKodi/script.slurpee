@@ -37,3 +37,10 @@ def parseEpisode(filename):
                 season = int(match.group(1))/100
                 episode = int(match.group(1))%100                
     return season, episode
+
+def getExtension(filename):
+    toks = filename.split('.')
+    ret = '.err'
+    if len(toks) > 1:
+        ret = toks[len(toks)-1]
+    return ret
