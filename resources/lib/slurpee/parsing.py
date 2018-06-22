@@ -2,8 +2,16 @@
 
 import re
 
+CHARS_TO_REMOVE = ["'"]
+
 def fuzzyMatch(targetName, f):
-    terms = targetName.lower().replace('.',' ').split(' ')
+    # Remove unusual characters
+    sanitizedTarget = targetName
+    sanitizedFile = f
+    for char in CHARS_TO_REMOVE:
+      sanitizedTarget.replace(char,'')
+      sanitizedFile.replace(char,'')
+    terms = sanitized.lower().replace('.',' ').split(' ')
     query_str = ''
     for term in terms:
         if term != '':
@@ -11,7 +19,7 @@ def fuzzyMatch(targetName, f):
                 query_str = query_str+'[ .]+'
             query_str = query_str + re.escape(term)
     query_str = query_str + '.*'
-    match = re.search(query_str,f.lower())
+    match = re.search(query_str,sanitizedFile.lower())
     if match:
         return f
     return None  
