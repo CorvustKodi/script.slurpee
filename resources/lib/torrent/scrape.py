@@ -54,7 +54,6 @@ def settingsFromFile(settings_file):
                 ret['TORRENT_FILE_PATH'] = node.attributes['value'].value
     except:
         pass
-    print ret
     return ret
     
 def scraper(settings, allshows):
