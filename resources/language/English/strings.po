@@ -58,6 +58,10 @@ msgctxt "#32300"
 msgid "The Pirate Bay"
 msgstr ""
 
+msgctxt "#32301"
+msgid "Lime Torrents"
+msgstr ""
+
 # Settings
 
 msgctxt "#32800"

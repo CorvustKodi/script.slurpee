@@ -17,4 +17,5 @@
     <setting id="search_trustedonly" type="bool" default="false" label="32821"/>
     <setting type="lsep" label="32830" />
     <setting id="search_enable_tpb" type="bool" default="true" label="32300"/>
+    <setting id="search_enable_limetorrents" type="bool" default="true" label="32301"/>
 </settings>
