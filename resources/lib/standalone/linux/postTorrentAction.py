@@ -11,22 +11,22 @@ import traceback
 import transmissionrpc
 import time
 
-import ../../slurpee.parsing as parsing
-import ../../slurpee.dataTypes as dataTypes
+import slurpee.parsing as parsing
+import slurpee.dataTypes as dataTypes
 
 SETTINGS_FILE_PATH="settings.xml"
 COPY_SCRIPT="file_copy.sh"
 
 def settingsFromFile(settings_file):
     ret = {'RPC_HOST':'127.0.0.1', 'RPC_PORT':2580, 'RPC_USER':'', \
-           'RPC_PASS':'', 'TORRENT_FILE_PATH':'', 'MAIL_ENABLED':True, \
+           'RPC_PASS':'', 'TORRENT_FILE_PATH':'', 'MAIL_ENABLED':False, \
            'SENDMAIL_DEST':'foo@bar.com', \
            'DEFAULT_NEW_PATH':'/home/user/Content/New', \
            'TORRENT_DOWNLOAD_PATH':'/home/user/Downloads', \
            'FILE_OWNER':'user'
           }
     try:
-        doc2 = xml.dom.minidom.parse(transmissionxbmc_file)
+        doc2 = xml.dom.minidom.parse(settings_file)
         settingsNodes = doc2.getElementsByTagName('setting')
         for node in settingsNodes:
             if node.attributes['id'].value == 'rpc_host':
@@ -35,7 +35,7 @@ def settingsFromFile(settings_file):
                 ret['RPC_PORT'] = node.attributes['value'].value
             if node.attributes['id'].value == 'rpc_user':
                 ret['RPC_USER'] = node.attributes['value'].value
-            if node.attributes['id'].value == 'rpc_password':
+            if node.attributes['id'].value == 'rpc_pass':
                 ret['RPC_PASS'] = node.attributes['value'].value
             if node.attributes['id'].value == 'mail_enabled':
                 if str(node.attributes['value'].value).lower() != 'true':
@@ -52,6 +52,7 @@ def settingsFromFile(settings_file):
                 ret['FILE_OWNER'] = node.attributes['value'].value
     except:
         pass
+    print ret
     return ret
 
 def sendMail(to_address,subject_text,body_text):
@@ -121,7 +122,8 @@ def mover(settings, allshows, tid = None):
                     if not foundShow:
                         print 'No match found for torrent id %d' % id_key      
                         try:
-                            subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),default_video_output_path+"/",settings.['FILE_OWNER']]).wait()
+                            print 'Copying to default video directory: %s' % 'sudo ' + COPY_SCRIPT + ' ' + os.path.join(download_path,tfile) + ' ' + default_video_output_path + '/ ' + settings['FILE_OWNER']
+                            subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),default_video_output_path+"/",settings['FILE_OWNER']]).wait()
                         except:
                             pass
                     else:
@@ -136,13 +138,13 @@ def mover(settings, allshows, tid = None):
                             season = '0' + str(int(season))
                         if int(episode) < 10:
                             episode = '0' + str(int(episode))
-                        dest_dir = os.path.join(bestmatch.path,'Season %d' % season)
+                        dest_dir = os.path.join(bestmatch.path,'Season %d' % int(season))
                         if not os.path.exists(dest_dir):
                             os.makedirs(dest_dir)
                         if os.path.exists(dest_dir):
                             target_file = bestmatch.filename + ' s' + str(season) + 'e' + str(episode) + '.' + parsing.getExtension(tfile)
                             if not os.path.isfile(os.path.join(dest_dir,target_file)):
-                                subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),dest_dir+"/",settings.['FILE_OWNER']]).wait()
+                                subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),dest_dir+"/",settings['FILE_OWNER']]).wait()
                         if settings['MAIL_ENABLED']:
                             sendMail(settings['SENDMAIL_DEST'],'%s - new episode available' % bestmatch.name,'A new episode of %s is available for playback in \
                               %s/Season %d: %s' % (bestmatch.name, bestmatch.path, bestmatch.season,target_file))
@@ -165,8 +167,12 @@ def mover(settings, allshows, tid = None):
             sendMail(settings['SENDMAIL_DEST'],'An error has occurred',exc_details)
 
 if __name__ == '__main__':
-    settings = settingsFromFile(SETTINGS_FILE_PATH)
-    allshows = dataType.ShowList(settings['TORRENT_FILE_PATH'])
+    print sys.argv
+ 
+    srcPath = os.path.dirname(sys.argv[0])
+    COPY_SCRIPT = os.path.join(srcPath,COPY_SCRIPT)
+    settings = settingsFromFile(sys.argv[1])
+    allshows = dataTypes.ShowList(settings['TORRENT_FILE_PATH'])
     if len(sys.argv) > 2:
         mover(settings,allshows,int(sys.argv[2]))
     else:

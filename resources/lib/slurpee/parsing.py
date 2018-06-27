@@ -11,7 +11,7 @@ def fuzzyMatch(targetName, f):
     for char in CHARS_TO_REMOVE:
       sanitizedTarget.replace(char,'')
       sanitizedFile.replace(char,'')
-    terms = sanitized.lower().replace('.',' ').split(' ')
+    terms = sanitizedTarget.lower().replace('.',' ').split(' ')
     query_str = ''
     for term in terms:
         if term != '':
