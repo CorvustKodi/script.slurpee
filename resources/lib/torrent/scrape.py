@@ -24,7 +24,7 @@ def settingsFromKodi(kodiSettings):
         ret['RPC_PASS'] = kodiSettings.getSetting('rpc_pass')
         ret['TRUSTEDONLY'] = kodiSettings.getSetting('search_trustedonly')
         ret['TORRENT_FILE_PATH'] = kodiSettings.getSetting('file_path')
-        if kodiSettings.getSetting('search_enable_limetorrents'):
+        if kodiSettings.getString('search_enable_limetorrents'):
             ret['SEARCHERS'].append('LimeTorrents')
         if kodiSettings.getSetting('search_enable_tpb'):
             ret['SEARCHERS'].append('ThePirateBay')
@@ -51,9 +51,11 @@ def settingsFromFile(settings_file):
                 if str(node.attributes['value'].value).lower() != 'true':
                     ret['TRUSTEDONLY'] = False
             if node.attributes['id'].value == 'search_enable_limetorrents':
-                ret['SEARCHERS'].append('LimeTorrents')
+                if str(node.attributes['value'].value).lower() == 'true':
+                    ret['SEARCHERS'].append('LimeTorrents')
             if node.attributes['id'].value == 'search_enable_tpb':
-                ret['SEARCHERS'].append('ThePirateBay')
+                if str(node.attributes['value'].value).lower() == 'true':
+                    ret['SEARCHERS'].append('ThePirateBay')
             if node.attributes['id'].value =='file_path':
                 ret['TORRENT_FILE_PATH'] = node.attributes['value'].value
     except:

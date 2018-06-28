@@ -19,7 +19,7 @@ COPY_SCRIPT="file_copy.sh"
 
 def settingsFromFile(settings_file):
     ret = {'RPC_HOST':'127.0.0.1', 'RPC_PORT':2580, 'RPC_USER':'', \
-           'RPC_PASS':'', 'TORRENT_FILE_PATH':'', 'MAIL_ENABLED':False, \
+           'RPC_PASS':'', 'TORRENT_FILE_PATH':'', 'MAIL_ENABLED':True, \
            'SENDMAIL_DEST':'foo@bar.com', \
            'DEFAULT_NEW_PATH':'/home/user/Content/New', \
            'TORRENT_DOWNLOAD_PATH':'/home/user/Downloads', \
@@ -52,7 +52,6 @@ def settingsFromFile(settings_file):
                 ret['FILE_OWNER'] = node.attributes['value'].value
     except:
         pass
-    print ret
     return ret
 
 def sendMail(to_address,subject_text,body_text):
@@ -86,6 +85,7 @@ def mover(settings, allshows, tid = None):
         
         if not os.path.exists(default_video_output_path):
             os.makedirs(default_video_output_path)
+        if not os.path.exists(default_audio_output_path):
             os.makedirs(default_audio_output_path)
         video_extensions = ['mp4', 'mov', 'mkv', 'avi', 'mpg']
         audio_extensions = ['mp3']
@@ -117,8 +117,9 @@ def mover(settings, allshows, tid = None):
                     for show in allshows.getShows():
                         if show.enabled:
                             print 'Checking %s' % show.name
-                            foundShow = parsing.fuzzyMatch(show.filename,tfile)
-                            matches.append(show)
+                            if parsing.fuzzyMatch(show.filename,tfile) != None:
+                                matches.append(show)
+                                foundShow = True
                     if not foundShow:
                         print 'No match found for torrent id %d' % id_key      
                         try:
@@ -138,12 +139,14 @@ def mover(settings, allshows, tid = None):
                             season = '0' + str(int(season))
                         if int(episode) < 10:
                             episode = '0' + str(int(episode))
+                        print "best match is %s" % bestmatch.name
                         dest_dir = os.path.join(bestmatch.path,'Season %d' % int(season))
                         if not os.path.exists(dest_dir):
                             os.makedirs(dest_dir)
                         if os.path.exists(dest_dir):
                             target_file = bestmatch.filename + ' s' + str(season) + 'e' + str(episode) + '.' + parsing.getExtension(tfile)
                             if not os.path.isfile(os.path.join(dest_dir,target_file)):
+                                print "sudo" + " " + COPY_SCRIPT + " " + os.path.join(download_path,tfile) + " " + dest_dir+"/" + " " + settings['FILE_OWNER']
                                 subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),dest_dir+"/",settings['FILE_OWNER']]).wait()
                         if settings['MAIL_ENABLED']:
                             sendMail(settings['SENDMAIL_DEST'],'%s - new episode available' % bestmatch.name,'A new episode of %s is available for playback in \
@@ -168,7 +171,6 @@ def mover(settings, allshows, tid = None):
 
 if __name__ == '__main__':
     print sys.argv
- 
     srcPath = os.path.dirname(sys.argv[0])
     COPY_SCRIPT = os.path.join(srcPath,COPY_SCRIPT)
     settings = settingsFromFile(sys.argv[1])

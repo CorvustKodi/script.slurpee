@@ -2,15 +2,15 @@
 
 import re
 
-CHARS_TO_REMOVE = ["'"]
+CHARS_TO_REMOVE = ["\'"]
 
 def fuzzyMatch(targetName, f):
     # Remove unusual characters
     sanitizedTarget = targetName
     sanitizedFile = f
-    for char in CHARS_TO_REMOVE:
-      sanitizedTarget.replace(char,'')
-      sanitizedFile.replace(char,'')
+    for sc in CHARS_TO_REMOVE:
+      sanitizedTarget = sanitizedTarget.replace(sc,'')
+      sanitizedFile = sanitizedFile.replace(sc,'')
     terms = sanitizedTarget.lower().replace('.',' ').split(' ')
     query_str = ''
     for term in terms:
@@ -52,3 +52,8 @@ def getExtension(filename):
     if len(toks) > 1:
         ret = toks[len(toks)-1]
     return ret
+
+
+if __name__ == '__main__':
+  import sys
+  fuzzyMatch(sys.argv[1],sys.argv[2])
