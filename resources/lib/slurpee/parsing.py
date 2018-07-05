@@ -4,13 +4,16 @@ import re
 
 CHARS_TO_REMOVE = ["\'"]
 
-def fuzzyMatch(targetName, f):
+def sanitizeString(s):
     # Remove unusual characters
-    sanitizedTarget = targetName
-    sanitizedFile = f
+    sanitized = s
     for sc in CHARS_TO_REMOVE:
-      sanitizedTarget = sanitizedTarget.replace(sc,'')
-      sanitizedFile = sanitizedFile.replace(sc,'')
+        sanitized = sanitized.replace(sc,'')    
+    return sanitized
+
+def fuzzyMatch(targetName, f):
+    sanitizedTarget = sanitizeString(targetName)
+    sanitizedFile = sanitizeString(f)
     terms = sanitizedTarget.lower().replace('.',' ').split(' ')
     query_str = ''
     for term in terms:

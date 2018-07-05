@@ -112,11 +112,13 @@ def scraper(settings, allshows):
                 engine = None
                 for SEARCHER in settings['SEARCHERS']:
                     try:
-                        
+          
                         xbmc.log('Calling engine %s' % SEARCHER,xbmc.LOGDEBUG)
                         engine = globals()[SEARCHER].Search()
                         results = engine.search(urllib.quote(targetName),{'trusted_uploaders':settings['TRUSTEDONLY']})
-                    
+                        sanitizedTarget = parsing.sanitizeString(targetName)
+                        if len(results) == 0 and sanitizedTarget != targetName:
+                            results = engine.search(urllib.quote(sanitizedTarget),{'trusted_uploaders':settings['TRUSTEDONLY']})
                         if len(results) > 0:
                             dlTorrent = results[0];
                         else:
