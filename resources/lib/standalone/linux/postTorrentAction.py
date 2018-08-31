@@ -150,7 +150,7 @@ def mover(settings, allshows, tid = None):
                                 subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),dest_dir+"/",settings['FILE_OWNER']]).wait()
                         if settings['MAIL_ENABLED']:
                             sendMail(settings['SENDMAIL_DEST'],'%s - new episode available' % bestmatch.name,'A new episode of %s is available for playback in \
-                              %s/Season %d: %s' % (bestmatch.name, bestmatch.path, bestmatch.season,target_file))
+                              %s/Season %d: %s' % (bestmatch.name, bestmatch.path, season,target_file))
             else:
                 print 'no id match:'
                 for key in files_dict.keys():
