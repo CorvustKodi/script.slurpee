@@ -64,7 +64,7 @@ def settingsFromFile(settings_file):
     
 def scraper(settings, allshows):
     socket.setdefaulttimeout(15)
-    # Create the client conneciton to transmission
+    # Create the client connection to transmission
     tc = transmissionrpc.Client(settings['RPC_HOST'], port=settings['RPC_PORT'], user=settings['RPC_USER'], password=settings['RPC_PASS'])
     activeTorrents = tc.list().values()
     torrentFiles = []
@@ -127,7 +127,7 @@ def scraper(settings, allshows):
                         found = False
                         if dlTorrent is not None :
                             for tfile in torrentFiles:
-                                hasMatch = parsing.fuzzyMatch(targetName,tfile)
+                                hasMatch = parsing.fuzzyMatch(targetName,repr(tfile))
                                 if hasMatch != None:
                                     xbmc.log('Found existing download: %s' % tfile,xbmc.LOGDEBUG)
                                     found = True
