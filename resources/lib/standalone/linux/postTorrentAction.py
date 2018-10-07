@@ -111,7 +111,7 @@ def mover(settings, allshows, tid = None):
                     except:
                         pass
                 for tfile in video_files:
-                    print ' --> %s' % tfile
+#                    print ' --> %s' % tfile
                     matches = []
                     foundShow = False
                     for show in allshows.getShows():
@@ -125,6 +125,8 @@ def mover(settings, allshows, tid = None):
                         try:
                             print 'Copying to default video directory: %s' % 'sudo ' + COPY_SCRIPT + ' ' + os.path.join(download_path,tfile) + ' ' + default_video_output_path + '/ ' + settings['FILE_OWNER']
                             subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),default_video_output_path+"/",settings['FILE_OWNER']]).wait()
+                            if settings['MAIL_ENABLED']:
+                                sendMail(settings['SENDMAIL_DEST'],'New video downloaded','%s - new file in videos' % tfile)
                         except:
                             pass
                     else:
@@ -147,7 +149,7 @@ def mover(settings, allshows, tid = None):
                             target_file = bestmatch.filename + ' s' + str(season) + 'e' + str(episode) + '.' + parsing.getExtension(tfile)
                             if not os.path.isfile(os.path.join(dest_dir,target_file)):
                                 print "sudo" + " " + COPY_SCRIPT + " " + os.path.join(download_path,tfile) + " " + dest_dir+"/" + " " + settings['FILE_OWNER']
-                                subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),dest_dir+"/",settings['FILE_OWNER']]).wait()
+                                subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,tfile),os.path.join(dest_dir,target_file),settings['FILE_OWNER']]).wait()
                         if settings['MAIL_ENABLED']:
                             sendMail(settings['SENDMAIL_DEST'],'%s - new episode available' % bestmatch.name,'A new episode of %s is available for playback in \
                               %s/Season %d: %s' % (bestmatch.name, bestmatch.path, int(season),target_file))

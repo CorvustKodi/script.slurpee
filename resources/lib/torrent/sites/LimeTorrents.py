@@ -88,7 +88,7 @@ class Search(BaseSearch):
                         if mag['href'].startswith('magnet:?'):
                             url = mag['href']
 
-                    print "name : %s, seeds: %d, trusted: %s" % (name,seeds,trusted)
+#                    print "name : %s, seeds: %d, trusted: %s" % (name,seeds,trusted)
 
                     if trusted or 'trusted_uploaders' not in settings.keys() or str(settings['trusted_uploaders']).lower() != 'true':
                         torrents.append({

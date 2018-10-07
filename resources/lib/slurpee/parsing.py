@@ -31,7 +31,7 @@ def parseEpisode(filename):
     # First try, look for the form sNNeMM
     season = 0
     episode = 0
-    match = re.search('s([0-9]+)e([0-9]+)',filename.lower())
+    match = re.search('s([0-9]+)[\W]?e([0-9]+)',filename.lower())
     if match:
         season = int(match.group(1))
         episode = int(match.group(2))

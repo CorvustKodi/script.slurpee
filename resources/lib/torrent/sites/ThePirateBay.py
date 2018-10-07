@@ -8,7 +8,8 @@ socket.setdefaulttimeout(15)
 
 class Search(BaseSearch):
     def __init__(self):
-        self.search_uris = ['https://thepiratebay.org/search/'
+        self.search_uris = ['https://thepiratebay.rocks/search/'
+                            ,'https://thepiratebay.org/search/'
                             ,'https://thepiratebay.se/search/'
                            ]
     def search(self, terms, settings={}):
