@@ -120,7 +120,10 @@ def scraper(settings, allshows):
                         if len(results) == 0 and sanitizedTarget != targetName:
                             results = engine.search(urllib.quote(sanitizedTarget),{'trusted_uploaders':settings['TRUSTEDONLY']})
                         if len(results) > 0:
-                            dlTorrent = results[0];
+                            for res in results:
+                                if parsing.fuzzyMatch(targetName,res):
+                                    dlTorrent = res
+                                    break;
                         else:
                             xbmc.log('No results returned.',xbmc.LOGDEBUG)
                             continue
