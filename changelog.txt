@@ -1,3 +1,7 @@
+Version 0.9.9
+	* Bug fixes
+	* Added limetorrents.cc
+	* Added new TPB source (thepiratebay.rocks)
 Version 0.9.8
 	* Bug fixes - scraper now works
 Version 0.9.7
