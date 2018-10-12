@@ -107,7 +107,7 @@ def mover(settings, allshows, tid = None):
                 for tfile in audio_files:
                     try:
                         # No fancy processing for audio files, just copy to the NEW directory
-                        subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,repr(tfile)),default_audio_output_path+"/"+tfile,settings['FILE_OWNER']]).wait()
+                        subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),default_audio_output_path+"/"+tfile,settings['FILE_OWNER']]).wait()
                     except:
                         pass
                 for tfile in video_files:
@@ -117,16 +117,16 @@ def mover(settings, allshows, tid = None):
                     for show in allshows.getShows():
                         if show.enabled:
                             print 'Checking %s' % show.name
-                            if parsing.fuzzyMatch(show.filename,repr(tfile)) != None:
+                            if parsing.fuzzyMatch(show.filename,str(tfile)) != None:
                                 matches.append(show)
                                 foundShow = True
                     if not foundShow:
                         print 'No match found for torrent id %d' % id_key      
                         try:
                             print 'Copying to default video directory: %s' % 'sudo ' + COPY_SCRIPT + ' ' + os.path.join(download_path,tfile) + ' ' + default_video_output_path + '/ ' + settings['FILE_OWNER']
-                            subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,repr(tfile)),default_video_output_path+"/",settings['FILE_OWNER']]).wait()
+                            subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),default_video_output_path+"/",settings['FILE_OWNER']]).wait()
                             if settings['MAIL_ENABLED']:
-                                sendMail(settings['SENDMAIL_DEST'],'New video downloaded','%s - new file in videos' % repr(tfile))
+                                sendMail(settings['SENDMAIL_DEST'],'New video downloaded','%s - new file in videos' % str(tfile))
                         except:
                             pass
                     else:
@@ -146,10 +146,10 @@ def mover(settings, allshows, tid = None):
                         if not os.path.exists(dest_dir):
                             os.makedirs(dest_dir)
                         if os.path.exists(dest_dir):
-                            target_file = bestmatch.filename + ' s' + str(season) + 'e' + str(episode) + '.' + parsing.getExtension(repr(tfile))
+                            target_file = bestmatch.filename + ' s' + str(season) + 'e' + str(episode) + '.' + parsing.getExtension(str(tfile))
                             if not os.path.isfile(os.path.join(dest_dir,target_file)):
-                                print "sudo" + " " + COPY_SCRIPT + " " + os.path.join(download_path,repr(tfile)) + " " + dest_dir+"/" + " " + settings['FILE_OWNER']
-                                subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,repr(tfile)),os.path.join(dest_dir,target_file),settings['FILE_OWNER']]).wait()
+                                print "sudo" + " " + COPY_SCRIPT + " " + os.path.join(download_path,str(tfile)) + " " + dest_dir+"/" + " " + settings['FILE_OWNER']
+                                subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),os.path.join(dest_dir,target_file),settings['FILE_OWNER']]).wait()
                         if settings['MAIL_ENABLED']:
                             sendMail(settings['SENDMAIL_DEST'],'%s - new episode available' % bestmatch.name,'A new episode of %s is available for playback in \
                               %s/Season %d: %s' % (bestmatch.name, bestmatch.path, int(season),target_file))

@@ -130,7 +130,7 @@ def scraper(settings, allshows):
                         found = False
                         if dlTorrent is not None :
                             for tfile in torrentFiles:
-                                hasMatch = parsing.fuzzyMatch(targetName,repr(tfile))
+                                hasMatch = parsing.fuzzyMatch(targetName,str(tfile))
                                 if hasMatch != None:
                                     xbmc.log('Found existing download: %s' % tfile,xbmc.LOGDEBUG)
                                     found = True
