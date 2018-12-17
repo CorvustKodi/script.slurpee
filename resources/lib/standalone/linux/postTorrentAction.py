@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 import os
 import xml.dom.minidom
 import datetime
@@ -87,7 +89,7 @@ def mover(settings, allshows, tid = None):
             os.makedirs(default_video_output_path)
         if not os.path.exists(default_audio_output_path):
             os.makedirs(default_audio_output_path)
-        video_extensions = ['mp4', 'mov', 'mkv', 'avi', 'mpg']
+        video_extensions = ['mp4', 'mov', 'mkv', 'avi', 'mpg', 'm4v']
         audio_extensions = ['mp3']
 
         tc = transmissionrpc.Client(settings['RPC_HOST'], port=settings['RPC_PORT'], user=settings['RPC_USER'], password=settings['RPC_PASS'])

@@ -1,16 +1,18 @@
 #!/usr/bin/python
 
-import os
-import sys
-import xml.dom.minidom
-import urllib
-import transmissionrpc
-import time
-import socket
-import slurpee.parsing as parsing
-import slurpee.dataTypes as dataTypes
+import os 
+import xml.dom.minidom 
+import urllib 
+import transmissionrpc 
+import time 
+import socket 
+import slurpee.parsing as parsing 
+import slurpee.dataTypes as dataTypes 
 import xbmc
 from torrent.sites import *
+import sys                                                                        
+reload(sys)                             
+sys.setdefaultencoding("utf-8")
 
 def settingsFromKodi(kodiSettings):
     import xbmcaddon
