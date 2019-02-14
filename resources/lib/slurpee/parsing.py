@@ -47,6 +47,8 @@ def parseEpisode(filename):
             if match:
                 season = int(match.group(1))/100
                 episode = int(match.group(1))%100                
+            else: # Next try season NN episode MM
+                match = re.search("season[ .]*([0-9]+)[ .]*episode[ ]*([0-9]+)",str(filename).lower())
     return season, episode
 
 def getExtension(filename):
