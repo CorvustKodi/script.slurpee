@@ -148,58 +148,14 @@ def processFiles(files, settings, allshows, timestamp=None):
 
 def scanner(settings, allshows, timefile):
     if not os.path.exists(timefile):
+        print 'First run, creating timestamp file'
         timestamp = time.time()
     else:
         with open(timefile,'rt') as f:
             timestamp = int(f.read())    
-        timestamp = processFiles(settings, allshows, timestamp=timestamp)
+        timestamp = processFiles(settings, allshows, timestamp)
     with open(timefile,'wt') as f:
         f.write('%d' % timestamp)
-
-def mover(settings, allshows, tid = None):
-    ''' The mover function is called by transmission when download is complete.
-      It is responsible for extracting the proper video files from the set
-      of files downloaded by the torrent, and placing them in the correct
-      destination directory.
-    '''
-    try:
-        if tid == None:
-            torrent_id = os.environ.get('TR_TORRENT_ID')
-        else:
-            torrent_id = tid
-
-        print 'Torrent ID: %s' % str(torrent_id)
-        download_path = settings['TORRENT_DOWNLOAD_PATH']
-
-        default_video_output_path = os.path.join(settings['DEFAULT_NEW_PATH'],"Video")
-        default_audio_output_path = os.path.join(settings['DEFAULT_NEW_PATH'],"Audio")
-        
-        if not os.path.exists(default_video_output_path):
-            os.makedirs(default_video_output_path)
-        if not os.path.exists(default_audio_output_path):
-            os.makedirs(default_audio_output_path)
-        video_extensions = ['mp4', 'mov', 'mkv', 'avi', 'mpg', 'm4v']
-        audio_extensions = ['mp3']
-
-        tc = transmissionrpc.Client(settings['RPC_HOST'], port=settings['RPC_PORT'], user=settings['RPC_USER'], password=settings['RPC_PASS'])
-        files_dict = tc.get_files()
-        torrent_list = tc.get_torrents()
-        files_list = []
-        if torrent_id != None:
-            id_key = int(torrent_id)
-            if id_key in files_dict.keys():
-                for file_key in files_dict[id_key].keys():
-                    files_list.append(files_dict[id_key][file_key]['name'])
-            else:
-                print 'no id match:'
-                for key in files_dict.keys():
-                    print '--> %d' % key
-            processFiles(settings, allshows, files_list)
-    except Exception:
-        exc_details = traceback.format_exc()
-        print '%s' % exc_details
-        if settings['MAIL_ENABLED']:
-            sendMail(settings['SENDMAIL_DEST'],'An error has occurred',exc_details)
 
 def cleanup(settings):
     try:
@@ -225,9 +181,7 @@ if __name__ == '__main__':
     COPY_SCRIPT = os.path.join(srcPath,COPY_SCRIPT)
     settings = settingsFromFile(sys.argv[1])
     allshows = dataTypes.ShowList(settings['TORRENT_FILE_PATH'])
-    if len(sys.argv) > 2:
-        mover(settings,allshows,int(sys.argv[2]))
-    else:
-        mover(settings,allshows)
+    timefile = sys.argv[2]
+    scanner(settings,allshows,timefile)
     cleanup(settings)
     exit(0)
