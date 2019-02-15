@@ -1,3 +1,5 @@
+Version 1.0.2
+	* Added a file scanner
 Version 1.0.1
 	* Bug fixing
         * Refactoring the postTorrentAction.py a bit as part of some dockerization work
