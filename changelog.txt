@@ -1,3 +1,6 @@
+Version 1.0.1
+	* Bug fixing
+        * Refactoring the postTorrentAction.py a bit as part of some dockerization work
 Version 1.0.0
 	* First stable-ish version
 Version 0.9.9

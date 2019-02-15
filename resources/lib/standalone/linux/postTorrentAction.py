@@ -67,6 +67,80 @@ def sendMail(to_address,subject_text,body_text):
     if status != 0:
         print "Sendmail exit status ", status
 
+
+
+def processFiles(files, settings, allshows):
+    ''' The mover function is called by transmission when download is complete.
+      It is responsible for extracting the proper video files from the set
+      of files downloaded by the torrent, and placing them in the correct
+      destination directory.
+    '''
+    try:
+        video_files = []
+        audio_files = []
+        for file_name in files:
+            toks = file_name.rsplit('.',1)
+            if len(toks)==2:
+                file_ext = (file_name).rsplit('.',1)[1]
+                if file_ext in video_extensions and file_name not in video_files:
+                    video_files.append(file_name)
+                if file_ext in audio_extensions and file_name not in audio_files:
+                    audio_files.append(file_name)
+        for tfile in audio_files:
+            try:
+                # No fancy processing for audio files, just copy to the NEW directory
+                subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),default_audio_output_path+"/"+tfile,settings['FILE_OWNER']]).wait()
+            except:
+                pass
+        for tfile in video_files:
+#                    print ' --> %s' % tfile
+            matches = []
+            foundShow = False
+            for show in allshows.getShows():
+                if show.enabled:
+                    print 'Checking %s' % show.name
+                    if parsing.fuzzyMatch(show.filename,str(tfile)) != None:
+                        matches.append(show)
+                        foundShow = True
+            if not foundShow:
+                print 'No match found for torrent id %d' % id_key      
+                try:
+                    print 'Copying to default video directory: %s' % 'sudo ' + COPY_SCRIPT + ' ' + os.path.join(download_path,tfile) + ' ' + default_video_output_path + '/ ' + settings['FILE_OWNER']
+                    subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),default_video_output_path+"/",settings['FILE_OWNER']]).wait()
+                    if settings['MAIL_ENABLED']:
+                        sendMail(settings['SENDMAIL_DEST'],'New video downloaded','%s - new file in videos' % str(tfile))
+                except:
+                    pass
+            else:
+                # All of the shows in 'matching' appear in the video filename. It stands to reason
+                # that the longest show name will be the best (kinda true right?)
+                bestmatch = matches[0]
+                for show in matches:
+                    if len(show.filename) > len(bestmatch.filename):
+                        bestmatch = show
+                season, episode = parsing.parseEpisode(tfile)
+                if int(season) < 10:
+                    season = '0' + str(int(season))
+                if int(episode) < 10:
+                    episode = '0' + str(int(episode))
+                print "best match is %s" % bestmatch.name
+                dest_dir = os.path.join(bestmatch.path,'Season %d' % int(season))
+                if not os.path.exists(dest_dir):
+                    os.makedirs(dest_dir)
+                if os.path.exists(dest_dir):
+                    target_file = bestmatch.filename + ' s' + str(season) + 'e' + str(episode) + '.' + parsing.getExtension(str(tfile))
+                    if not os.path.isfile(os.path.join(dest_dir,target_file)):
+                        print "sudo" + " " + COPY_SCRIPT + " " + os.path.join(download_path,str(tfile)) + " " + dest_dir+"/" + " " + settings['FILE_OWNER']
+                        subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),os.path.join(dest_dir,target_file),settings['FILE_OWNER']]).wait()
+                if settings['MAIL_ENABLED']:
+                    sendMail(settings['SENDMAIL_DEST'],'%s - new episode available' % bestmatch.name,'A new episode of %s is available for playback in \
+                      %s/Season %d: %s' % (bestmatch.name, bestmatch.path, int(season),target_file))
+    except Exception:
+        exc_details = traceback.format_exc()
+        print '%s' % exc_details
+        if settings['MAIL_ENABLED']:
+            sendMail(settings['SENDMAIL_DEST'],'An error has occurred',exc_details)
+
 def mover(settings, allshows, tid = None):
     ''' The mover function is called by transmission when download is complete.
       It is responsible for extracting the proper video files from the set
@@ -95,77 +169,34 @@ def mover(settings, allshows, tid = None):
         tc = transmissionrpc.Client(settings['RPC_HOST'], port=settings['RPC_PORT'], user=settings['RPC_USER'], password=settings['RPC_PASS'])
         files_dict = tc.get_files()
         torrent_list = tc.get_torrents()
+        files_list = []
         if torrent_id != None:
             id_key = int(torrent_id)
             if id_key in files_dict.keys():
-                video_files = []
-                audio_files = []
                 for file_key in files_dict[id_key].keys():
-                    file_ext = (files_dict[id_key][file_key]['name']).rsplit('.',1)[1]
-                    if file_ext in video_extensions and files_dict[id_key][file_key]['name'] not in video_files:
-                        video_files.append(files_dict[id_key][file_key]['name'])
-                    if file_ext in audio_extensions and files_dict[id_key][file_key]['name'] not in audio_files:
-                        audio_files.append(files_dict[id_key][file_key]['name'])
-                for tfile in audio_files:
-                    try:
-                        # No fancy processing for audio files, just copy to the NEW directory
-                        subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),default_audio_output_path+"/"+tfile,settings['FILE_OWNER']]).wait()
-                    except:
-                        pass
-                for tfile in video_files:
-#                    print ' --> %s' % tfile
-                    matches = []
-                    foundShow = False
-                    for show in allshows.getShows():
-                        if show.enabled:
-                            print 'Checking %s' % show.name
-                            if parsing.fuzzyMatch(show.filename,str(tfile)) != None:
-                                matches.append(show)
-                                foundShow = True
-                    if not foundShow:
-                        print 'No match found for torrent id %d' % id_key      
-                        try:
-                            print 'Copying to default video directory: %s' % 'sudo ' + COPY_SCRIPT + ' ' + os.path.join(download_path,tfile) + ' ' + default_video_output_path + '/ ' + settings['FILE_OWNER']
-                            subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),default_video_output_path+"/",settings['FILE_OWNER']]).wait()
-                            if settings['MAIL_ENABLED']:
-                                sendMail(settings['SENDMAIL_DEST'],'New video downloaded','%s - new file in videos' % str(tfile))
-                        except:
-                            pass
-                    else:
-                        # All of the shows in 'matching' appear in the video filename. It stands to reason
-                        # that the longest show name will be the best (kinda true right?)
-                        bestmatch = matches[0]
-                        for show in matches:
-                            if len(show.filename) > len(bestmatch.filename):
-                                bestmatch = show
-                        season, episode = parsing.parseEpisode(tfile)
-                        if int(season) < 10:
-                            season = '0' + str(int(season))
-                        if int(episode) < 10:
-                            episode = '0' + str(int(episode))
-                        print "best match is %s" % bestmatch.name
-                        dest_dir = os.path.join(bestmatch.path,'Season %d' % int(season))
-                        if not os.path.exists(dest_dir):
-                            os.makedirs(dest_dir)
-                        if os.path.exists(dest_dir):
-                            target_file = bestmatch.filename + ' s' + str(season) + 'e' + str(episode) + '.' + parsing.getExtension(str(tfile))
-                            if not os.path.isfile(os.path.join(dest_dir,target_file)):
-                                print "sudo" + " " + COPY_SCRIPT + " " + os.path.join(download_path,str(tfile)) + " " + dest_dir+"/" + " " + settings['FILE_OWNER']
-                                subprocess.Popen(["sudo",COPY_SCRIPT,os.path.join(download_path,str(tfile)),os.path.join(dest_dir,target_file),settings['FILE_OWNER']]).wait()
-                        if settings['MAIL_ENABLED']:
-                            sendMail(settings['SENDMAIL_DEST'],'%s - new episode available' % bestmatch.name,'A new episode of %s is available for playback in \
-                              %s/Season %d: %s' % (bestmatch.name, bestmatch.path, int(season),target_file))
+                    files_list.append(files_dict[id_key][file_key]['name'])
             else:
                 print 'no id match:'
                 for key in files_dict.keys():
                     print '--> %d' % key
+            processFiles(settings, allshows, files_list)
+    except Exception:
+        exc_details = traceback.format_exc()
+        print '%s' % exc_details
+        if settings['MAIL_ENABLED']:
+            sendMail(settings['SENDMAIL_DEST'],'An error has occurred',exc_details)
+
+def cleanup(settings):
+    try:
+        tc = transmissionrpc.Client(settings['RPC_HOST'], port=settings['RPC_PORT'], user=settings['RPC_USER'], password=settings['RPC_PASS'])
+        torrent_list = tc.get_torrents()
         now = time.time()
         oneWeek = 60*60*24*4
-        for id in files_dict.keys():
-            t = tc.get_torrent(id)
+        for t in torrent_list:
             doneDate = t.__getattr__('doneDate')
             if doneDate > 0 and doneDate < (now - oneWeek):
-                print 'Found an old torrent (id = %d) - removing.' % int(id)
+                id = int(t.__getattr__('id'))
+                print 'Found an old torrent (id = %d) - removing.' % id
                 tc.remove_torrent(id,True)
     except Exception:
         exc_details = traceback.format_exc()
@@ -183,4 +214,5 @@ if __name__ == '__main__':
         mover(settings,allshows,int(sys.argv[2]))
     else:
         mover(settings,allshows)
+    cleanup(settings)
     exit(0)
