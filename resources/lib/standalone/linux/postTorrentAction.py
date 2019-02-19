@@ -77,6 +77,17 @@ def processFiles(files, settings, allshows, timestamp=None):
     '''
     runtime = time.time()
     try:
+        download_path = settings['TORRENT_DOWNLOAD_PATH']
+
+        default_video_output_path = os.path.join(settings['DEFAULT_NEW_PATH'],"Video")
+        default_audio_output_path = os.path.join(settings['DEFAULT_NEW_PATH'],"Audio")
+        
+        if not os.path.exists(default_video_output_path):
+            os.makedirs(default_video_output_path)
+        if not os.path.exists(default_audio_output_path):
+            os.makedirs(default_audio_output_path)
+        video_extensions = ['mp4', 'mov', 'mkv', 'avi', 'mpg', 'm4v']
+        audio_extensions = ['mp3']
         video_files = []
         audio_files = []
         for file_name in files:
@@ -169,17 +180,6 @@ def mover(settings, allshows, tid = None):
             torrent_id = tid
 
         print 'Torrent ID: %s' % str(torrent_id)
-        download_path = settings['TORRENT_DOWNLOAD_PATH']
-
-        default_video_output_path = os.path.join(settings['DEFAULT_NEW_PATH'],"Video")
-        default_audio_output_path = os.path.join(settings['DEFAULT_NEW_PATH'],"Audio")
-        
-        if not os.path.exists(default_video_output_path):
-            os.makedirs(default_video_output_path)
-        if not os.path.exists(default_audio_output_path):
-            os.makedirs(default_audio_output_path)
-        video_extensions = ['mp4', 'mov', 'mkv', 'avi', 'mpg', 'm4v']
-        audio_extensions = ['mp3']
 
         tc = transmissionrpc.Client(settings['RPC_HOST'], port=settings['RPC_PORT'], user=settings['RPC_USER'], password=settings['RPC_PASS'])
         files_dict = tc.get_files()
@@ -194,7 +194,8 @@ def mover(settings, allshows, tid = None):
                 print 'no id match:'
                 for key in files_dict.keys():
                     print '--> %d' % key
-            processFiles(settings, allshows, files_list)
+            print files_list
+            processFiles(files_list, settings, allshows)
     except Exception:
         exc_details = traceback.format_exc()
         print '%s' % exc_details

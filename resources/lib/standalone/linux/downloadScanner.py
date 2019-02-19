@@ -10,7 +10,7 @@ import subprocess
 import shutil
 import traceback
 
-import transmissionrpc
+from torrent import transmissionrpc
 import time
 
 import slurpee.parsing as parsing
